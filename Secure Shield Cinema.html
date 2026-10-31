@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Secure Shield Cinema</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#50BCFF;--blue-d:#1c7ec0;--navy:#08184f;--yellow:#EFF300;--yellow-l:#fbffa0;--white:#fff;
+--display:'Bungee','Impact',sans-serif;--body:'DM Sans',system-ui,sans-serif;box-sizing:border-box;
+padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--blue);color:var(--navy);font-family:var(--body);line-height:1.5;
+background-image:radial-gradient(circle at 50% -10%,#c9ecff 0,transparent 55%),repeating-linear-gradient(90deg,transparent 0 78px,rgba(255,255,255,.05) 78px 80px)}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+
+/* Marquee */
+.marquee{max-width:880px;margin:28px auto 0;padding:0 16px}
+.sign{position:relative;background:var(--yellow);color:var(--navy);text-align:center;padding:34px 20px 28px;
+border:6px solid var(--navy);border-radius:10px;box-shadow:0 0 0 6px var(--yellow),0 18px 0 -2px var(--blue-d),0 0 60px rgba(255,214,10,.55)}
+.sign h1{font-family:var(--display);font-weight:400;margin:0;font-size:clamp(34px,9vw,84px);line-height:1;letter-spacing:.02em}
+.sign p{margin:10px 0 0;font-weight:700;font-size:clamp(14px,2.6vw,18px)}
+.bulbs{position:absolute;left:10px;right:10px;height:12px;display:flex;justify-content:space-between}
+.bulbs.t{top:9px}.bulbs.b{bottom:9px}
+.bulbs i{width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px #fff,0 0 0 2px var(--navy);animation:blink 1.4s infinite}
+.bulbs i:nth-child(even){animation-delay:.7s}
+@keyframes blink{0%,45%{opacity:1}55%,100%{opacity:.25;box-shadow:0 0 0 2px var(--navy)}}
+
+.now{max-width:1080px;margin:56px auto 12px;padding:0 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between}
+.now h2{font-family:var(--display);font-weight:400;font-size:clamp(22px,4vw,34px);margin:0;color:var(--navy)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:700 14px var(--body);border:2px solid var(--yellow);background:transparent;color:var(--yellow);padding:7px 16px;border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--yellow);color:var(--navy)}
+
+/* Tickets */
+.grid{max-width:1080px;margin:0 auto;padding:12px 20px 64px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:26px}
+.ticket{all:unset;cursor:pointer;display:flex;flex-direction:column;background:var(--yellow);color:var(--navy);border-radius:14px;overflow:hidden;
+box-shadow:6px 6px 0 var(--navy);transition:transform .15s,box-shadow .15s;position:relative}
+.ticket:hover,.ticket:focus-visible{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--navy)}
+.poster{aspect-ratio:2/3;display:flex;align-items:flex-end;padding:16px;position:relative;color:#fff;background:linear-gradient(160deg,var(--c1),var(--c2))}
+.poster::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 14px,transparent 14px 28px)}
+.poster b{font-family:var(--display);font-weight:400;font-size:26px;line-height:1.05;position:relative;text-shadow:2px 2px 0 rgba(0,0,0,.35)}
+.play{position:absolute;top:14px;right:14px;width:46px;height:46px;border-radius:50%;background:var(--yellow);display:grid;place-items:center}
+.play::after{content:"";border-left:15px solid var(--navy);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.stub{display:flex;justify-content:space-between;gap:10px;padding:14px 16px 16px;font-weight:700;font-size:14px;border-top:3px dashed var(--navy);position:relative}
+.stub::before,.stub::after{content:"";position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:var(--blue)}
+.stub::before{left:-11px}.stub::after{right:-11px}
+.stub span:last-child{background:var(--navy);color:var(--yellow);padding:2px 10px;border-radius:6px;white-space:nowrap}
+.empty{grid-column:1/-1;text-align:center;padding:40px;border:3px dashed var(--yellow);border-radius:14px}
+
+/* Theater */
+dialog{border:0;padding:0;background:transparent;max-width:min(960px,96vw);width:100%;color:#fff}
+dialog::backdrop{background:rgba(4,12,48,.92)}
+.screen{border:6px solid var(--yellow);border-radius:12px;background:#000;box-shadow:0 0 70px rgba(26,92,255,.9)}
+.frame{aspect-ratio:16/9;width:100%;border:0;display:block;background:#000}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 4px}
+.bar h3{font-family:var(--display);font-weight:400;margin:0;color:var(--yellow);font-size:clamp(18px,3vw,26px)}
+.btns{display:flex;gap:10px}
+.btn{font:700 14px var(--body);padding:10px 18px;border-radius:999px;border:0;cursor:pointer;background:var(--yellow);color:var(--navy);text-decoration:none}
+.btn.o{background:transparent;color:#fff;border:2px solid #fff}
+.note{font-size:13px;opacity:.8;padding:0 4px 8px}
+
+.about{background:var(--navy);color:#fff;padding:48px 20px}
+.about .wrap{max-width:880px;margin:0 auto}
+.about h2{font-family:var(--display);font-weight:400;color:var(--yellow);margin:0 0 12px;font-size:clamp(24px,4vw,34px)}
+.about h3{margin:26px 0 10px;color:var(--blue);font-size:16px}
+.about ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.about li{border:2px solid var(--yellow);color:var(--yellow);padding:6px 16px;border-radius:999px;font-weight:700;font-size:14px}
+.about .cw{margin-top:28px;font-size:14px;opacity:.85}
+footer{text-align:center;padding:26px 20px 40px;background:var(--navy);color:var(--yellow-l);font-weight:500}
+footer b{font-family:var(--display);font-weight:400;color:var(--yellow)}
+@media (prefers-reduced-motion:reduce){.bulbs i{animation:none}.ticket{transition:none}}
+</style>
+</head>
+<body>
+<header class="marquee">
+  <div class="sign">
+    <div class="bulbs t" aria-hidden="true"></div>
+    <h1>Secure Shield</h1>
+    <p>3 short documentaries on online child sexual exploitation and abuse (OCSEA)</p>
+    <div class="bulbs b" aria-hidden="true"></div>
+  </div>
+</header>
+
+<section class="now">
+  <h2>Now showing</h2>
+</section>
+<main class="grid" id="grid"></main>
+
+<section class="about">
+  <div class="wrap">
+    <h2>About the project</h2>
+    <p>Secure Shield is a project run by three communities, creating 3 short documentaries about online child sexual exploitation and abuse (OCSEA).</p>
+    <h3>Implemented by</h3>
+    <ul><li>Digital Safety Taskforce</li><li>Hero of Digital Protection</li><li>GAS Mataram</li></ul>
+    <h3>Supported by</h3>
+    <ul><li>Pusat Kajian dan Perlindungan Anak</li><li>Kindernothilfe</li><li>German Cooperation (Deutsche Zusammenarbeit)</li></ul>
+    <p class="cw">These films deal with a sensitive topic. Viewer discretion is advised.</p>
+  </div>
+</section>
+
+<dialog id="theater" aria-label="Theater">
+  <div class="screen"><iframe class="frame" id="frame" allow="autoplay; fullscreen" allowfullscreen title="Film player"></iframe></div>
+  <div class="bar">
+    <h3 id="ttl"></h3>
+    <div class="btns"><a class="btn" id="open" target="_blank" rel="noopener">Open in Drive</a><button class="btn o" id="close">Close</button></div>
+  </div>
+  <p class="note">If the screen stays blank, click “Open in Drive”.</p>
+</dialog>
+
+<footer><b>Secure Shield Cinema</b> · Enjoy the show</footer>
+
+<script>
+/* ====== EDIT BAGIAN INI: isi film dari Google Drive ======
+   link = link share dari Google Drive (format .../file/d/ID/view) */
+const FILMS = [
+  {title:"Her Life Her Choice", genre:"Short documentary", year:"Film 1", link:"https://drive.google.com/drive/folders/17szcxLAi295GauwrwMm8TBXJI_A95IYC"},
+  {title:"Before It’s Too Late", genre:"Short documentary", year:"Film 2", link:"https://drive.google.com/drive/folders/1KMlnnNxE6IFBQM9am4FVFSImZeL0RtQq"},
+  {title:"Seseorang di Ujung Chat", genre:"Short documentary", year:"Film 3", link:"https://drive.google.com/drive/folders/1LAO07lAKt27gjlqciOPMxw1Tu2tvgedF"}
+];
+/* ========================================================= */
+
+const PAL=[["#1c7ec0","#08184f"],["#08184f","#1c7ec0"],["#0a2fa8","#50BCFF"]];
+const $=id=>document.getElementById(id);
+const idOf=u=>{const m=u.match(/\/d\/([\w-]+)/)||u.match(/[?&]id=([\w-]+)/);return m?m[1]:null};
+let active="Semua";
+
+[...Array(24)].forEach(()=>{document.querySelectorAll('.bulbs').forEach(b=>b.appendChild(document.createElement('i')))});
+
+function chips(){
+  const gs=["Semua",...new Set(FILMS.map(f=>f.genre))];
+  $('chips').innerHTML="";
+  gs.forEach(g=>{const b=document.createElement('button');b.className='chip';b.textContent=g;
+    b.setAttribute('aria-pressed',g===active);b.onclick=()=>{active=g;chips();render()};$('chips').appendChild(b)});
+}
+function render(){
+  const list=FILMS.filter(f=>active==="Semua"||f.genre===active);
+  const grid=$('grid');grid.innerHTML="";
+  if(!list.length){grid.innerHTML='<div class="empty">Belum ada film di genre ini.</div>';return}
+  list.forEach((f,i)=>{
+    const [c1,c2]=PAL[i%PAL.length];
+    const t=document.createElement('button');t.className='ticket';
+    t.innerHTML=`<div class="poster" style="--c1:${c1};--c2:${c2}"><span class="play"></span><b></b></div>
+      <div class="stub"><span></span><span></span></div>`;
+    t.querySelector('b').textContent=f.title;
+    const s=t.querySelectorAll('.stub span');s[0].textContent=f.genre;s[1].textContent=f.year;
+    t.setAttribute('aria-label','Watch '+f.title);
+    t.onclick=()=>watch(f);grid.appendChild(t);
+  });
+}
+function watch(f){
+  const id=idOf(f.link);
+  $('ttl').textContent=f.title;
+  $('open').href=f.link;
+  const fid=(f.link.match(/folders\/([\w-]+)/)||[])[1];
+  $('frame').src=id?`https://drive.google.com/file/d/${id}/preview`:fid?`https://drive.google.com/embeddedfolderview?id=${fid}#grid`:"about:blank";
+  $('theater').showModal();
+}
+function stop(){$('frame').src="about:blank";$('theater').close()}
+$('close').onclick=stop;
+$('theater').addEventListener('close',()=>{$('frame').src="about:blank"});
+$('theater').addEventListener('click',e=>{if(e.target===$('theater'))stop()});
+render();
+</script>
+</body>
+</html>
